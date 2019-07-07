@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { Button } from 'react-native-elements';
+import { ListItem, Avatar } from 'react-native-elements';
 import axios from 'axios';
 import config from '../config';
 
 export default class PaintList extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			paints: []
+		};
 
 		this.getPaints = this.getPaints.bind(this);
 	}
@@ -19,7 +21,7 @@ export default class PaintList extends Component {
 		axios
 			.get(config.PREFIX + '/getpaints')
 			.then(response => {
-				console.log(response.data);
+				this.setState({ paints: response.data });
 			})
 			.catch(error => {
 				console.log(error);
@@ -28,9 +30,23 @@ export default class PaintList extends Component {
 
 	render() {
 		return (
-			<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-				<Text>Hello, world!</Text>
-				<Button />
+			<View>
+				{this.state.paints.map((v, i) => (
+					<ListItem
+						key={v.id}
+						title={v.name}
+						subtitle={v.type}
+						leftAvatar={{
+							size: 'small',
+							title: v.amount.toString(),
+							overlayContainerStyle: { backgroundColor: '#747474' }
+						}}
+						rightIcon={{
+							name: 'edit',
+							onPress: () => console.log(v)
+						}}
+					/>
+				))}
 			</View>
 		);
 	}
