@@ -3,18 +3,27 @@ import { Text, View } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
 import axios from 'axios';
 import config from '../config';
+import editPaint from './EditPaint';
+import EditPaint from './EditPaint';
 
 export default class PaintList extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			paints: []
+			paints: [],
+			editOverlayOpen: false,
+			editablePaint: {}
 		};
 
 		this.getPaints = this.getPaints.bind(this);
+		this.toggleEditOverlay = this.toggleEditOverlay.bind(this);
 	}
 	componentWillMount() {
 		this.getPaints();
+	}
+
+	toggleEditOverlay() {
+		this.setState({ editOverlayOpen: !this.state.editOverlayOpen });
 	}
 
 	getPaints() {
@@ -43,10 +52,20 @@ export default class PaintList extends Component {
 						}}
 						rightIcon={{
 							name: 'edit',
-							onPress: () => console.log(v)
+							onPress: () => {
+								this.setState({ editablePaint: v });
+								this.toggleEditOverlay();
+							}
 						}}
 					/>
 				))}
+				{this.state.editOverlayOpen ? (
+					<EditPaint
+						paint={this.state.editablePaint}
+						toggleEditOverlay={this.toggleEditOverlay}
+						isVisible={this.state.editOverlayOpen}
+					/>
+				) : null}
 			</View>
 		);
 	}
